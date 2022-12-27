@@ -1,0 +1,71 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "github.com/szlove/gogrpc/backend/pb";
+
+import "google/protobuf/timestamp.proto";
+
+message SignUpRequest {
+	string api_key  = 1;
+	string user_id  = 2;
+	string password = 3;
+	string name     = 4;
+	string email    = 5;
+}
+
+message SignUpResponse {
+	string message = 1;
+	string user_id = 2;
+}
+
+message GetUserByIdRequest {
+	string api_key = 1;
+	string user_id = 2;
+}
+
+message GetUserByIdResponse {
+	string                    id         = 1;
+	string                    name       = 2;
+	string                    email      = 3;
+	google.protobuf.Timestamp created_at = 4;
+}
+
+message SignInRequest {
+	string api_key  = 1;
+	string user_id  = 2;
+	string password = 3;
+}
+
+message SignInResponse {
+	string token = 2;
+}
+
+message ChangePasswordRequest {
+	string api_key          = 1;
+	string token            = 2;
+	string current_password = 3;
+	string new_password     = 4;
+}
+
+message ChangePasswordResponse {
+	string message = 1;
+}
+
+message DeleteUserRequest {
+	string api_key  = 1;
+	string token    = 2;
+	string password = 3;
+}
+
+message DeleteUserResponse {
+	string message = 1;
+}
+
+service User {
+	rpc SignUp(SignUpRequest) returns (SignUpResponse) {}
+	rpc GetUserById(GetUserByIdRequest) returns (GetUserByIdResponse) {}
+	rpc SignIn(SignInRequest) returns (SignInResponse) {}
+	rpc ChangePassword(ChangePasswordRequest) returns (ChangePasswordResponse) {}
+	rpc Delete(DeleteUserRequest) returns (DeleteUserResponse) {}
+}

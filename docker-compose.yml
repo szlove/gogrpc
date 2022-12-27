@@ -1,0 +1,61 @@
+version: "3.9"
+
+services:
+  database:
+    container_name: database
+    build:
+      context: ./database
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - TZ=Asia/Seoul
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./database:/docker-entrypoint-initdb.d
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+      interval: 0.1s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    container_name: backend
+    build:
+      context: ./backend
+    environment:
+      - PORT=8000
+      - DB_HOST=database
+      - DB_PORT=5432
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - API_KEY=${API_KEY}
+      - TOKEN_SECRET=${TOKEN_SECRET}
+      - TZ=Asia/Seoul
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/go/src/backend
+    # restart: always
+    depends_on:
+      database:
+        condition: service_healthy
+
+  client:
+    container_name: client
+    build:
+      context: ./client
+    environment:
+      - PORT=4000
+      - BACKEND_HOST=backend:8000
+      - API_KEY=${API_KEY}
+      - TZ=Asia/Seoul
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./client:/go/src/client
+    # restart: always
+    depends_on:
+      - backend
