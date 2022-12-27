@@ -840,7 +840,7 @@ func init() {
 ```
 
 ## client/proto/user.proto
-```go
+```proto
 syntax = "proto3";
 
 package pb;
