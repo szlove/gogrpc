@@ -43,7 +43,7 @@ const createUser = `
 INSERT INTO users (
 	id, password, name, email
 ) VALUES (
-    $1, $2,       $3,   $4
+	$1, $2,       $3,   $4
 );`
 
 type CreateUserParams struct {
